@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('stats/', include("stats.urls")),
     path('', include("stats.urls")),
+    #path('s3_import/', include("s3_import.urls")),
     #path('stat_analysis/', include("stats.urls") ),
 ]

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    's3_import'
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,14 @@ STATICFILES_DIRS = [
 #]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+AWS_ACCESS_KEY_ID = 'AKIA5FTZCF35QK2ZHU4L'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'footwebbucket'
+AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'eu-north-1'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL =  None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'        
