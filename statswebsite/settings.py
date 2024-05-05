@@ -75,15 +75,26 @@ WSGI_APPLICATION = 'statswebsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'djangoprojectcopy',
+#        'USER': 'postgres',
+#        'PASSWORD': 'Drogba11',
+#        'HOST': 'localhost'
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'djangoprojectcopy',
-        'USER': 'postgres',
-        'PASSWORD': 'Drogba11',
-        'HOST': 'localhost'
+        'NAME': 'footdatadeploy',
+        'USER': 'donkokaj',
+        'PASSWORD': 'drogba11',
+        'HOST': 'database-footweb.cdiwguke43p8.eu-north-1.rds.amazonaws.com',
+        'PORT': '5432',
     }
-}
+}    
 
 
 # Password validation
