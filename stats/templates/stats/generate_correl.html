@@ -1,0 +1,244 @@
+<!-- initial.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <script src="{% static 'stats/script.js' %}"></script>
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+
+    <style>
+        .filter-container {
+            text-align: center;
+        }
+    </style>
+
+    <!-- Other sections... -->
+
+    <div class="filter-container">
+
+    <div id="freq-analysis">
+        <h3>Correlation</h3>
+
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <br>
+
+    <!-- League Dropdown -->
+    <div id="league-dropdown">
+        
+        <label for="league-select">League:</label>
+        <input type="text" id="league-select" value="{{ league }}">
+    </div>
+
+    <br>
+
+    <!-- Season Dropdown -->
+    <div id="season-dropdown">
+        <label for="season-select">Season:</label>
+        <input type="text" id="season-select" value="{{ season }}">
+    </div>
+
+    <!-- Button to go to Stat Analysis -->
+    
+
+    </div>
+
+    <title>KPI Correlation Table</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<h2>KPI Correlation Table</h2>
+
+<table id="correlationTable">
+    <tr>
+        <th>KPI</th>
+        <th>Goals scored</th>
+        <th>Goals conceded</th>
+        <th>Goals scored f half</th>
+        <th>Goals conceded f half</th>
+        <th>Shots</th>
+        <th>Shots conceded</th>
+        <th>Shots OT</th>
+        <th>Shots OT conceded</th>
+        <th>Fouls</th>
+        <th>Fouls against</th>
+        <th>Corners created</th>
+        <th>Corners conceded</th>
+        <th>Yellow cards</th>
+        <th>Yellow cards against</th>
+        <th>Red cards</th>
+        <th>Red cards against</th>
+        <th>Goal difference</th>
+        
+    </tr>
+</table>
+
+<script>
+    const goals_scored = JSON.parse('{{ goals_scored|escapejs }}');
+    const goals_conceded = JSON.parse('{{ goals_conceded|escapejs }}');
+    const goals_scored_FH = JSON.parse('{{ goals_scored_FH|escapejs }}');
+    const goals_conceded_FH = JSON.parse('{{ goals_conceded_FH|escapejs }}');
+    const shots = JSON.parse('{{ shots|escapejs }}');
+    const shots_conceded = JSON.parse('{{ shots_conceded|escapejs }}');
+    const shots_OT = JSON.parse('{{ shots_OT|escapejs }}');
+    const shots_OT_conceded = JSON.parse('{{ shots_OT_conceded|escapejs }}');
+    const fouls = JSON.parse('{{ fouls|escapejs }}');
+    const fouls_against = JSON.parse('{{ fouls_against|escapejs }}');
+    const corners = JSON.parse('{{ corners|escapejs }}');
+    const corners_conceded = JSON.parse('{{ corners_conceded|escapejs }}');
+    const yellow_cards = JSON.parse('{{ yellow_cards|escapejs }}');
+    const yellow_cards_against = JSON.parse('{{ yellow_cards_against|escapejs }}');
+    const red_cards = JSON.parse('{{ red_cards|escapejs }}');
+    const red_cards_against = JSON.parse('{{ red_cards_against|escapejs }}');
+    const goal_difference = JSON.parse('{{ goal_difference|escapejs }}');
+    
+    // Sample data for demonstration
+    const kpis = [
+            { name: 'Goals scored', values: goals_scored },
+            { name: 'Goals conceded', values: goals_conceded },
+            { name: 'Goals scored f half', values: goals_scored_FH },
+            { name: 'Goals conceded f half', values: goals_conceded_FH },
+            { name: 'Shots', values: shots },
+            { name: 'Shots conceded', values: shots_conceded },
+            { name: 'Shots OT', values: shots_OT },
+            { name: 'Shots OT conceded', values: shots_OT_conceded },
+            { name: 'Fouls', values: fouls },
+            { name: 'Fouls against', values: fouls_against },
+            { name: 'Corners created', values: corners },
+            { name: 'Corners conceded', values: corners_conceded },
+            { name: 'Yellow cards', values: yellow_cards },
+            { name: 'Yellow cards against', values: yellow_cards_against },
+            { name: 'Red cards', values: red_cards },
+            { name: 'Red cards against', values: red_cards_against },
+            { name: 'Goal difference', values: goal_difference },
+    ];
+
+    // Function to calculate correlation coefficient
+    function correlationCoefficient(x, y) {
+        let n = x.length;
+        let sum_x = 0;
+        let sum_y = 0;
+        let sum_xy = 0;
+        let sum_x2 = 0;
+        let sum_y2 = 0;
+
+        for (let i = 0; i < n; i++) {
+            sum_x += x[i];
+            sum_y += y[i];
+            sum_xy += x[i] * y[i];
+            sum_x2 += x[i] * x[i];
+            sum_y2 += y[i] * y[i];
+        }
+
+        let numerator = n * sum_xy - sum_x * sum_y;
+        let denominator = Math.sqrt((n * sum_x2 - sum_x * sum_x) * (n * sum_y2 - sum_y * sum_y));
+
+        return numerator / denominator;
+    }
+
+    // Generate correlation table
+    const table = document.getElementById('correlationTable');
+    for (let i = 0; i < kpis.length; i++) {
+        let row = table.insertRow();
+        let cell = row.insertCell(0);
+        cell.innerHTML = kpis[i].name;
+
+        for (let j = 0; j < kpis.length; j++) {
+            let cell = row.insertCell(j + 1);
+            let coefficient = correlationCoefficient(kpis[i].values, kpis[j].values);
+            cell.innerHTML = coefficient.toFixed(2);
+        }
+    }
+
+    
+</script>
+
+    <!-- Include jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+</body>
+
+<script>
+    $(document).ready(function() {
+        $('#go-to-correl').click(function(event) {
+            // Prevent default button behavior
+            event.preventDefault();
+
+            // Get selected league and season values
+            var league = $('#league-select').val();
+            var season = $('#season-select').val();
+            //var stat = $('#stat-select').val();
+
+            // Construct the URL with selected league and season
+            var url = "{% url 'generate_correl' %}?league=" + league + "&season=" + season;
+
+            // Redirect to the URL
+            window.location.href = url;
+        });
+    });
+</script>
+
+<script>
+// Generate correlation table
+const table1 = document.getElementById('correlationTable');
+
+for (let i = 0; i < kpis.length; i++) {
+    for (let j = 0; j < kpis.length; j++) {
+        let coefficient;
+
+        // For the upper triangular matrix, calculate the correlation coefficient
+        if (i <= j) {
+            coefficient = correlationCoefficient(kpis[i].values, kpis[j].values);
+        }
+        // For the lower triangular matrix, use the already calculated coefficient from the upper triangular
+        else {
+            coefficient = table1.rows[j + 1].cells[i + 1].innerHTML;
+        }
+
+        let cell = table1.rows[i + 1].cells[j + 1];
+
+        // Color coding based on correlation coefficient value
+        if (coefficient >= 0.7) {
+            cell.style.backgroundColor = '#008000'; // Dark green
+        } else if (coefficient >= 0.5) {
+            cell.style.backgroundColor = '#90EE90'; // Light green
+        } else if (coefficient >= -0.5) {
+            cell.style.backgroundColor = '#FFFF00'; // Yellow
+        } else if (coefficient >= -0.7) {
+            cell.style.backgroundColor = '#FFA07A'; // Light red
+        } else {
+            cell.style.backgroundColor = '#FF0000'; // Dark red
+        }
+
+        //cell.innerHTML = coefficient.toFixed(2);
+    }
+}
+</script>
+
+</html>

@@ -1,0 +1,78 @@
+<!-- initial.html -->
+{% load static %}
+
+<!-- initial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    <input type="hidden" id="isIndexPage" value="true">
+
+
+    <div id="ranges-outcome-frequency">
+        <h3>Correlation</h3>
+
+        <a href="{% url 'correlation' %}">Go to correlation</a>
+            
+    </div>
+
+    <div id="all_games">
+        <h3>All games</h3>
+
+        <a href="{% url 'all_games' %}">Go to all games</a>
+            
+    </div>
+
+
+    <div id="stat-analysis">
+        <h3>Stat Analysis</h3>
+
+        <a href="{% url 'stat_analysis' %}">Go to Stat Analysis</a>
+        
+    </div>
+
+    <div id="basic-table">
+        <h3>Baic Table</h3>
+
+        <a href="{% url 'basic_table' %}">Go to Basic Table</a>
+        
+    </div>
+    
+    <!--  
+    <div id="filters">
+        <h3>Basic Table</h3>
+        
+        <label for="season">Select Season:</label>
+        <select id="season">
+            <option value="">All</option>
+            {% for season in seasons %}
+                <option value="{{ season }}">{{ season }}</option>
+            {% endfor %}
+        </select>
+        <label for="league">Select League:</label>
+        <select id="league">
+            <option value="">All</option>
+            {% for league in leagues %}
+                <option value="{{ league }}">{{ league }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <div id="team-table">
+        
+    </div>
+    -->
+    <script src="{% static 'stats/script.js' %}"></script>
+</body>
+
+
+</html>

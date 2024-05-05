@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histogram - Football Stats</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0"></script>
+</head>
+<body>
+  <h1>Histogram of Goals Scored</h1>
+
+  {% if histogram_image %}
+    <canvas id="histogramChart"></canvas>
+  {% else %}
+    <p>No data available for the selected filters.</p>
+  {% endif %}
+
+  <script>
+    /*
+    // Chart.js configuration to generate the histogram using data from the Django view
+    var ctx = document.getElementById('histogramChart').getContext('2d');
+    //var histogramData = JSON.parse({{ histogram_image|safe }});  // Access JSON data
+
+    // Parse the received JSON data
+    var goalsScored = histogramData;  // Assuming data is directly in the parsed object
+
+    // Chart.js configuration
+    var myChart = new Chart(ctx, {
+      type: 'bar',  // Use bar chart type for histogram
+      data: {
+        labels: [],  // Replace with labels for each data point (optional)
+        datasets: [{
+          label: 'Goals Scored',
+          data: goalsScored,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });*/
+
+    
+  // Chart.js configuration to generate the histogram using data from the Django view
+  var ctx = document.getElementById('histogramChart').getContext('2d');
+  //var histogramData = {{ histogram_image|safe }};  // Access JSON data
+
+  // Extract dates of the games as labels for each game
+  var gameDates = Object.keys(histogramData);
+  
+  // Extract the corresponding number of goals scored for each game as data points
+  var goalsScored = Object.values(histogramData);
+
+  // Chart.js configuration
+  var myChart = new Chart(ctx, {
+    type: 'bar',  // Use bar chart type for histogram
+    data: {
+      labels: gameDates,  // Use dates of the games as labels for each data point
+      datasets: [{
+        label: 'Goals Scored',
+        data: goalsScored,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          type: 'time', // Set x-axis scale type to 'time' for dates
+          time: {
+            unit: 'day' // Display dates by day
+          },
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Goals Scored'
+          },
+          ticks: {
+            beginAtZero: true
+          }
+        }
+      }
+    }
+  });
+
+
+  </script>
+
+  <p>Team: {{ selected_team }}</p>
+  <p>Date Range: {{ from_date }} - {{ to_date }}</p>
+
+</body>
+</html>
+

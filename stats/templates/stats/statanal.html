@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <!-- Include jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<style>
+    .filter-container {
+        text-align: center;
+    }
+</style>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+
+    <div class="filter-container">
+
+    <div id="stat-analysis">
+        <h3>Stat Analysis</h3>
+        <!-- Add the content for stat analysis here -->
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <br>
+
+    <!-- League Dropdown -->
+    <div id="league-dropdown">
+        <label for="league-select">Select League:</label>
+        <select id="league-select">
+            {% for league in leagues %}
+                <option value="{{ league }}">{{ league }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <br>
+
+    <!-- Season Dropdown -->
+    <div id="season-dropdown">
+        <label for="season-select">Select Season:</label>
+        <select id="season-select">
+            {% for season in seasons %}
+                <option value="{{ season }}">{{ season }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <br>
+
+    <div id="stat-dropdown">
+        <label for="stat-select">Select Statistic Type:</label>
+        <select id="stat-select">
+            <option value="goals">Goals</option>
+            <option value="corners">Corners</option>
+            <option value="shots">Shots</option>
+            <option value="shots_on_target">Shots on Target</option>
+            <option value="fouls">Fouls</option>
+            <option value="yellow_cards">Yellow Cards</option>
+            <option value="red_cards">Red Cards</option>
+        </select>
+    </div>
+
+    <br>
+
+    <!-- Button to go to Stat Analysis -->
+    <div id="apply-button">
+        <button id="go-to-analysis">Go to Stat Analysis</button>
+    </div>
+
+</div>
+
+    <!-- Include jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#go-to-analysis').click(function(event) {
+                // Prevent default button behavior
+                event.preventDefault();
+
+                // Get selected league and season values
+                var league = $('#league-select').val();
+                var season = $('#season-select').val();
+                var stat = $('#stat-select').val();
+
+                // Construct the URL with selected league and season
+                var url = "{% url 'generate_histogram' %}?league=" + league + "&season=" + season + "&stat=" + stat;
+
+                // Redirect to the URL
+                window.location.href = url;
+            });
+        });
+    </script>
+</body>
+</html>

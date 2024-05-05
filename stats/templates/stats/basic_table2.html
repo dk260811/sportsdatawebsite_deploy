@@ -1,0 +1,53 @@
+<!-- initial.html -->
+{% load static %}
+
+<!-- initial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    <input type="hidden" id="isIndexPage" value="true">
+
+    <div id="freq-analysis">
+        <h3>Home</h3>
+    
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <div id="filters">
+        <h3>Basic Table</h3>
+        
+        <label for="season">Select Season:</label>
+        <select id="season">
+            <option value="">All</option>
+            {% for season in seasons %}
+                <option value="{{ season }}">{{ season }}</option>
+            {% endfor %}
+        </select>
+        <label for="league">Select League:</label>
+        <select id="league">
+            <option value="">All</option>
+            {% for league in leagues %}
+                <option value="{{ league }}">{{ league }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <div id="team-table">
+        <!-- Table content will be loaded dynamically after applying filters -->
+    </div>
+
+    <script src="{% static 'stats/script.js' %}"></script>
+</body>
+
+
+</html>

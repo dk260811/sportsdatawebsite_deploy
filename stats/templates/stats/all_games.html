@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select games</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <!-- Include jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<style>
+    .filter-container {
+        text-align: center;
+    }
+</style>
+<body>
+    <header>
+        <h1>Football stats</h1>
+    </header>
+
+    <div class="filter-container">
+
+    <div id="stat-analysis">
+        <h3>Select games</h3>
+        <!-- Add the content for stat analysis here -->
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <br>
+
+    <!-- League Dropdown -->
+    <div id="league-dropdown">
+        <label for="league-select">Select League:</label>
+        <select id="league-select">
+            {% for league in leagues %}
+                <option value="{{ league }}">{{ league }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <br>
+
+    <!-- Season Dropdown -->
+    <div id="season-dropdown">
+        <label for="season-select">Select Season:</label>
+        <select id="season-select">
+            {% for season in seasons %}
+                <option value="{{ season }}">{{ season }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <br>
+
+    <!-- Date Range Picker -->
+    <div id="date-range-picker">
+        <label for="start-date">Start Date:</label>
+        <input type="text" id="start-date">
+    </div>
+
+    <br>
+    
+    <div id="date-range-picker2">
+        <label for="end-date">End Date:</label>
+        <input type="text" id="end-date">
+    </div>
+
+    <br>
+
+    <!-- Button to go to Stat Analysis -->
+    <div id="apply-button">
+        <button id="go-to-games">Go to games</button>
+    </div>
+
+    </div>
+
+    <!-- Include jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize datepicker for start date
+            $("#start-date").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                onSelect: function(selectedDate) {
+                    $("#end-date").datepicker("option", "minDate", selectedDate);
+                }
+            });
+
+            // Initialize datepicker for end date
+            $("#end-date").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                onSelect: function(selectedDate) {
+                    $("#start-date").datepicker("option", "maxDate", selectedDate);
+                }
+            });
+
+            $('#go-to-games').click(function(event) {
+                // Prevent default button behavior
+                event.preventDefault();
+
+                // Get selected league, season, start date, and end date values
+                var league = $('#league-select').val();
+                var season = $('#season-select').val();
+                var startDate = $('#start-date').val();
+                var endDate = $('#end-date').val();
+
+                // Check if start date and end date are filled out
+                if (!startDate || !endDate) {
+                    // Show an alert message
+                    alert("Please fill out both start date and end date.");
+                    return; // Stop further execution
+                }
+
+                // Construct the URL with selected league, season, start date, and end date
+                var url = "{% url 'generate_games' %}?league=" + league + "&season=" + season + "&start_date=" + startDate + "&end_date=" + endDate;
+                //var url = "{% url 'generate_games' %}?league=" + league + "&season=" + season
+
+                // Redirect to the URL
+                window.location.href = url;
+            });
+        });
+    </script>
+</body>
+</html>

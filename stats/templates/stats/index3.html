@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#basic">Basic Table</a></li>
+            <!-- Add other tabs as needed -->
+        </ul>
+    </nav>
+
+    <div id="basic" class="tab-content">
+        <h2>Basic Team Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Season</th>
+                    <th>League</th>
+                    <th>Team</th>
+                    <th>Total Points</th>
+                    <th>Goals Scored</th>
+                    <th>Goals Conceded</th>
+                    <th>Goal Difference</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team.season_ft }}</td>
+                    <td>{{ team.league }}</td>
+                    <td>{{ team.team_ft }}</td>
+                    <td>{{ team.total_points }}</td>
+                    <td>{{ team.total_goals_scored }}</td>
+                    <td>{{ team.total_goals_conceded }}</td>
+                    <td>{{ team.goal_difference }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Other tab contents -->
+    
+    
+</body>
+</html>

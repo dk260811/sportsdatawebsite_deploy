@@ -1,0 +1,82 @@
+<!-- initial.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+        /* Center the content of #freq-analysis */
+        #freq-analysis {
+            text-align: center;
+        }
+
+        /* Center the content of #filters */
+        #filters {
+            text-align: center;
+        }
+
+        /* Center the content of #team-table */
+        #team-table {
+            margin: 0 auto; /* This centers the div horizontally */
+        }
+        #totalsAveragesButton {
+            text-align: center;
+            margin-bottom: 20px; /* Add some space between the elements */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    <input type="hidden" id="isIndexPage" value="true">
+
+    <div id="freq-analysis">
+        <h3>Home</h3>
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <div id="filters">
+        <h3>Basic Table</h3>
+        <label for="season">Select Season:</label>
+        <select id="season">
+            <option value="">All</option>
+            {% for season in seasons %}
+                <option value="{{ season }}">{{ season }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+        <label for="league">Select League:</label>
+        <select id="league">
+            <option value="">All</option>
+            {% for league in leagues %}
+                <option value="{{ league }}">{{ league }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+    <br>
+    <div id="team-table">
+        <!-- Table content will be loaded dynamically after applying filters -->
+    </div>
+
+    <script src="{% static 'stats/script.js' %}"></script>
+</body>
+</html>

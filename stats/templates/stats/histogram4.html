@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Histogram</title>
+<style>
+    /* Style the histogram bars */
+    .bar {
+        fill: steelblue;
+    }
+
+    /* Style the text labels */
+    .label {
+        font-family: sans-serif;
+        font-size: 12px;
+        text-anchor: middle;
+    }
+</style>
+</head>
+<body>
+<svg id="histogram"></svg>
+<br> <!-- Line break added here -->
+<svg id="histogram2"></svg>
+
+<script src="https://d3js.org/d3.v6.min.js"></script> <!-- Include D3 library -->
+
+<script>
+    // Get data from Django view
+    const teams_json = JSON.parse('{{ teams_json|escapejs }}');
+    const goal_counts_json = JSON.parse('{{ goal_counts_json|escapejs }}');
+
+    // Dimensions
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const fullWidth = window.innerWidth * 0.98; // 90% of window width
+    const fullHeight = 400; // Adjust height as needed
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
+
+    // SVG
+    const svg = d3.select("#histogram")
+        .attr("width", fullWidth)
+        .attr("height", fullHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Scales
+    const x = d3.scaleBand()
+        .domain(teams_json)
+        .range([0, width])
+        .padding(0.1);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(goal_counts_json)])
+        .nice()
+        .range([height, 0]);
+
+    // Bars
+    svg.selectAll(".bar")
+        .data(teams_json)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d))
+        .attr("width", x.bandwidth())
+        .attr("y", (d, i) => y(goal_counts_json[i]))
+        .attr("height", (d, i) => height - y(goal_counts_json[i]));
+
+    // X Axis
+    svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x));
+
+    // Y Axis
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    // Labels
+    svg.selectAll(".label")
+        .data(teams_json)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("x", d => x(d) + x.bandwidth() / 2)
+        .attr("y", (d, i) => y(goal_counts_json[i]) - 5)
+        .attr("text-anchor", "middle")
+        .text((d, i) => goal_counts_json[i]);
+</script>
+
+<script>
+    // Get data from Django view
+    const goals_json = JSON.parse('{{ goals_json|escapejs }}');
+
+    // Perform frequency analysis
+    const goalCounts = {};
+    goals_json.forEach(goal => {
+        goalCounts[goal] = (goalCounts[goal] || 0) + 1;
+    });
+
+    const frequencies = Object.entries(goalCounts).map(([count, goals]) => ({ count, goals }));
+
+    // Dimensions
+    const margin2 = { top: 20, right: 20, bottom: 30, left: 40 };
+    const fullWidth2 = window.innerWidth * 0.98; // 98% of window width
+    const fullHeight2 = 400; // Adjust height as needed
+    const width2 = fullWidth2 - margin2.left - margin2.right;
+    const height2 = fullHeight2 - margin2.top - margin2.bottom;
+
+    // Create SVG for game goals histogram
+    const svgGameGoals = d3.select("#histogram2")
+        .attr("width", fullWidth2)
+        .attr("height", fullHeight2 / 2) // Half of the fullHeight
+        .append("g")
+        .attr("transform", `translate(${margin2.left},${margin2.top})`); // Adjusted for top margin
+
+    // Scales for game goals histogram
+    const xGame = d3.scaleLinear()
+        .domain([0, d3.max(frequencies, d => d.goals)])
+        .nice()
+        .range([0, width2]);
+
+    const yGame = d3.scaleBand()
+        .domain(frequencies.map(d => d.count))
+        .range([0, height2 / 2]) // Half of the height
+        .padding(0.1);
+
+    // Bars for game goals histogram
+    svgGameGoals.selectAll(".bar")
+        .data(frequencies)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("width", d => xGame(d.goals))
+        .attr("y", d => yGame(d.count))
+        .attr("height", yGame.bandwidth()) // Adjusted to use bandwidth of y scale
+        .attr("fill", "steelblue");
+
+    // X Axis for game goals histogram
+    svgGameGoals.append("g")
+        .attr("transform", `translate(0,${height2 / 2})`) // Half of the height
+        .call(d3.axisBottom(xGame));
+
+    // Y Axis for game goals histogram
+    svgGameGoals.append("g")
+        .call(d3.axisLeft(yGame));
+
+    // Labels for game goals histogram
+    svgGameGoals.selectAll(".label")
+        .data(frequencies)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("x", d => xGame(d.count) + 5) // Adjusted for better alignment
+        .attr("y", d => yGame(d.goals) + yGame.bandwidth() / 2) // Adjusted for better alignment
+        .attr("text-anchor", "start") // Adjusted for better alignment
+        .attr("alignment-baseline", "middle") // Adjusted for better alignment
+        .text(d => d.count);
+</script>
+
+
+
+</body>
+</html>

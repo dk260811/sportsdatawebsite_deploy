@@ -1,0 +1,63 @@
+<!-- initial.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <style>
+        /* CSS for displaying divs horizontally */
+        #container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping to next row if space is insufficient */
+        }
+
+        /* Optional styling for the divs */
+        #container > div {
+            width: 200px; /* Adjust width as needed */
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    <input type="hidden" id="isIndexPage" value="true">
+
+    <div id="container">
+
+        <div id="basic-table">
+            <h3>Basic Table</h3>
+            <a href="{% url 'basic_table' %}">Go to Basic Table</a>
+        </div>
+
+        <div id="all_games">
+            <h3>All games</h3>
+            <a href="{% url 'all_games' %}">Go to all games</a>
+        </div>
+
+        <div id="ranges-outcome-frequency">
+            <h3>Correlation</h3>
+            <a href="{% url 'correlation' %}">Go to correlation</a>
+        </div>
+
+        <div id="stat-analysis">
+            <h3>Stat Analysis</h3>
+            <a href="{% url 'stat_analysis' %}">Go to Stat Analysis</a>
+        </div>
+
+        
+    </div>
+
+    <script src="{% static 'stats/script.js' %}"></script>
+</body>
+</html>

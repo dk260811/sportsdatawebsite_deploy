@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Stats</title>
+  <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+  <script src="{% static 'stats/script.js' %}"></script>
+</head>
+
+<body>
+  
+
+  <button id="totalsAveragesButton" onclick="toggleTotalsAverages()">Totals</button>
+
+  <div id="filters">
+    <label for="homeaway">Select Home/Away:</label>
+    <select id="homeaway">
+        <option value="">All</option>
+        
+          <option value="all">All</option>
+          <option value="Homegame">Homegames</option>
+          <option value="Awaygame">Awaygames</option>
+        
+    </select>
+    <button onclick="applyFilters()">Apply Filters</button>
+</div>
+
+
+  <div id="kpis">
+    <h2>KPIs</h2>
+    <input type="hidden" id="isTablePage" value="false">
+    <input type="hidden" id="season" value="{{ teams.first.season_ft }}">
+    <input type="hidden" id="league" value="{{ teams.first.league }}">
+    <span class="kpi" onclick="toggleColumn('Total Points &#9660;')">Total Points</span>
+    <span class="kpi" onclick="toggleColumn('Goals Scored &#9660;')">Goals Scored</span>
+    <span class="kpi" onclick="toggleColumn('Goals Conceded &#9660;')">Goals Conceded</span>
+    <span class="kpi" onclick="toggleColumn('Goal Difference &#9660;')">Goal Difference</span>
+    <span class="kpi" onclick="toggleColumn('Total Shots &#9660;')">Total Shots</span>
+    <span class="kpi" onclick="toggleColumn('Total Shots Conceded &#9660;')">Total Shots Conceded</span>
+    <span class="kpi" onclick="toggleColumn('Shots on Target &#9660;')">Shots on Target</span>
+    <span class="kpi" onclick="toggleColumn('Shots on Target Conceded &#9660;')">Shots on Target Conceded</span>
+    <span class="kpi" onclick="toggleColumn('Total Corners &#9660;')">Total Corners</span>
+    <span class="kpi" onclick="toggleColumn('Total Corners Conceded &#9660;')">Total Corners Conceded</span>
+    <span class="kpi" onclick="toggleColumn('Total Fouls &#9660;')">Total Fouls</span>
+    <span class="kpi" onclick="toggleColumn('Yellow Cards &#9660;')">Yellow Cards</span>
+    <span class="kpi" onclick="toggleColumn('Red Cards &#9660;')">Total Red Cards</span>
+  </div>
+
+  <div id="basic" class="tab-content">
+    <h2>Basic Team Table</h2>
+    
+    <table class="team-table" data-season="{{ teams.first.season_ft }}" data-league="{{ teams.first.league }}">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Season </th>
+          <th onclick="sortTable(1)">League </th>
+          <th onclick="sortTable(2)">Team </th>
+          <th onclick="sortTable(3)">Games Played </th>
+          <th onclick="sortTable(4)">Total Points &#9660;</th>
+          <th onclick="sortTable(5)">Goals Scored &#9660;</th>
+          <th onclick="sortTable(6)">Goals Conceded &#9660;</th>
+          <th onclick="sortTable(7)">Goal Difference &#9660;</th>
+          <th onclick="sortTable(8)">Total Shots &#9660;</th>
+          <th onclick="sortTable(9)">Total Shots Conceded &#9660;</th>
+          <th onclick="sortTable(10)">Shots on Target &#9660;</th>
+          <th onclick="sortTable(11)">Shots on Target Conceded &#9660;</th>
+          <th onclick="sortTable(12)">Total Corners &#9660;</th>
+          <th onclick="sortTable(13)">Total Corners Conceded &#9660;</th>
+          <th onclick="sortTable(14)">Total Fouls &#9660;</th>
+          <th onclick="sortTable(15)">Yellow Cards &#9660;</th>
+          <th onclick="sortTable(16)">Red Cards &#9660;</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for team in teams %}
+        <tr>
+          <td>{{ team.season_ft }}</td>
+          <td>{{ team.league }}</td>
+          <td>{{ team.team_ft }}</td>
+          <td>{{ team.games_played }}</td>
+          <td>{{ team.total_points }}</td>
+          <td>{{ team.total_goals_scored }}</td>
+          <td>{{ team.total_goals_conceded }}</td>
+          <td>{{ team.goal_difference }}</td>
+          <td>{{ team.total_shots_recorded }}</td>
+          <td>{{ team.total_shots_conceded }}</td>
+          <td>{{ team.total_shots_OT_recorded }}</td>
+          <td>{{ team.total_shots_OT_conceded }}</td>
+          <td>{{ team.total_corners_recorded }}</td>
+          <td>{{ team.total_corners_conceded }}</td>
+          <td>{{ team.total_fouls }}</td>
+          <td>{{ team.total_yellow_cards }}</td>
+          <td>{{ team.total_red_cards }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+</body>
+
+</html>

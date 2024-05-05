@@ -1,0 +1,66 @@
+<!-- index.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    
+    <div id="filters">
+        <label for="season">Select Season:</label>
+        <select id="season">
+            <option value="">All</option>
+            {% for season in seasons %}
+                <option value="{{ season }}">{{ season }}</option>
+            {% endfor %}
+        </select>
+        <label for="league">Select League:</label>
+        <select id="league">
+            <option value="">All</option>
+            {% for league in leagues %}
+                <option value="{{ league }}">{{ league }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <div id="team-table">
+        <h2>Basic Team Table</h2>
+        <table class="team-table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Season</th>
+                    <th onclick="sortTable(1)">League</th>
+                    <th onclick="sortTable(2)">Team</th>
+                    <th onclick="sortTable(3)">Total Points</th>
+                    <th onclick="sortTable(4)">Goals Scored</th>
+                    <th onclick="sortTable(5)">Goals Conceded</th>
+                    <th onclick="sortTable(6)">Goal Difference</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team.season_ft }}</td>
+                    <td>{{ team.league }}</td>
+                    <td>{{ team.team_ft }}</td>
+                    <td>{{ team.total_points }}</td>
+                    <td>{{ team.total_goals_scored }}</td>
+                    <td>{{ team.total_goals_conceded }}</td>
+                    <td>{{ team.goal_difference }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{% static 'stats/script.js' %}"></script>
+</body>
+</html>

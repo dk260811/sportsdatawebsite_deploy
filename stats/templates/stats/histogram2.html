@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Histogram - {{ league }} - {{ season }}</title>
+    {{ teams_json }}
+    {{ goal_counts_json }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  </head>
+<body>
+    <h1>Histogram of Goals Scored in {{ league }} - {{ season }}</h1>
+    <canvas id="histogramCanvas"></canvas>  <script>
+        // Access data from the template context
+        const teams = JSON.parse('{{ teams_json }}');
+        const goalCounts = JSON.parse('{{ goal_counts_json }}');
+
+        // Create a new Chart.js instance
+        const ctx = document.getElementById('histogramCanvas').getContext('2d');
+        const histogram = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: teams,
+                datasets: [{
+                    label: 'Goals Scored',
+                    data: goalCounts,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+</html>

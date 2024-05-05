@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <script src="{% static 'stats/script.js' %}"></script>
+</head>
+
+<body>
+
+    <div id="kpis">
+        <label><input type="checkbox" name="kpi" value="Total Points" checked> Total Points</label>
+        <label><input type="checkbox" name="kpi" value="Goals Scored" checked> Goals Scored</label>
+        <!-- Add checkboxes for other KPIs -->
+    </div>
+
+    <div id="basic" class="tab-content">
+        <h2>Basic Team Table</h2>
+        <table class="team-table">
+            <thead>
+                <tr>
+                    
+                    <th onclick="sortTable(0)">
+                        Season
+                        
+                    </th>
+                    <th onclick="sortTable(1)">
+                        League
+                        
+                    </th>
+                    <th onclick="sortTable(2)">
+                        Team
+                        
+                    </th>
+                    <th onclick="sortTable(3)">
+                        Games Played
+                        
+                    </th>
+                    <th onclick="sortTable(4)">
+                        Total Points
+                        <span class="sort-icon">&#9660;</span>
+                    </th>
+                    <th onclick="sortTable(5)">
+                        Goals Scored
+                        <span class="sort-icon">&#9660;</span>
+                    </th>
+                    <th onclick="sortTable(6)">
+                        Goals Conceded
+                        <span class="sort-icon">&#9660;</span>
+                    </th>
+                    <th onclick="sortTable(7)">
+                        Goal Difference
+                        <span class="sort-icon">&#9660;</span>
+                    </th>
+                    <th onclick="sortTable(8)">Total Shots</th>
+                    <th onclick="sortTable(9)">Total Shots Conceded</th>
+                    <th onclick="sortTable(10)">Shots on Target</th>
+                    <th onclick="sortTable(11)">Shots on Target Conceded</th>
+                    <th onclick="sortTable(12)">Total Corners</th>
+                    <th onclick="sortTable(13)">Total Corners Conceded</th>
+                    <th onclick="sortTable(14)">Total Fouls</th>
+                    <th onclick="sortTable(15)">Yellow Cards</th>
+                    <th onclick="sortTable(16)">Red Cards</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                      <!-- Display the ranking based on the iteration index -->
+                    <td>{{ team.season_ft }}</td>
+                    <td>{{ team.league }}</td>
+                    <td>{{ team.team_ft }}</td>
+                    <td>{{ team.games_played }}</td>
+                    <td>{{ team.total_points }}</td>
+                    <td>{{ team.total_goals_scored }}</td>
+                    <td>{{ team.total_goals_conceded }}</td>
+                    <td>{{ team.goal_difference }}</td>
+                    <td>{{ team.total_shots_recorded }}</td>
+                    <td>{{ team.total_shots_conceded }}</td>
+                    <td>{{ team.total_shots_OT_recorded }}</td>
+                    <td>{{ team.total_shots_OT_conceded }}</td>
+                    <td>{{ team.total_corners_recorded }}</td>
+                    <td>{{ team.total_corners_conceded }}</td>
+                    <td>{{ team.total_fouls }}</td>
+                    <td>{{ team.total_yellow_cards }}</td>
+                    <td>{{ team.total_red_cards }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+    </div>
+
+</body>
+
+</html>

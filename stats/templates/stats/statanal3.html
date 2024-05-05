@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <!-- Include jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+
+    <div id="stat-analysis">
+        <h3>Stat Analysis</h3>
+        <!-- Add the content for stat analysis here -->
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <!-- Time Slicer with Datepicker -->
+    <div id="time-slicer">
+        <label for="from">From:</label>
+        <input type="text" id="from" name="from" class="datepicker">
+        <label for="to">To:</label>
+        <input type="text" id="to" name="to" class="datepicker">
+    </div>
+
+    <!-- Team Dropdown -->
+    <div id="team-dropdown">
+        <label for="team-select">Select Team:</label>
+        <select id="team-select">
+            {% for team in teams %}
+                <option value="{{ team }}">{{ team }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Apply Selections Button -->
+    <div id="apply-button">
+        <button id="apply-selections">Apply Selections</button>
+    </div>
+
+    <!-- Histogram Container -->
+    <div id="histogram-container">
+        <canvas id="goals-histogram"></canvas>
+    </div>
+
+    <!-- Include jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Script to initialize Datepicker -->
+    <script>
+        $(function() {
+            // Initialize Datepicker
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd", // Format the date as desired
+                changeMonth: true,
+                changeYear: true
+            });
+
+            // AJAX request to update histogram on button click
+            $('#apply-selections').click(function() {
+                var team = $('#team-select').val();
+                var from_date = $('#from').val();
+                var to_date = $('#to').val();
+                
+                $.ajax({
+                    type: 'GET',
+                    url: '{% url "histogram" %}',
+                    data: {
+                        'team': team,
+                        'from_date': from_date,
+                        'to_date': to_date,
+                    },
+                    success: function(data) {
+                        // Generate histogram using Chart.js
+                        var ctx = document.getElementById('goals-histogram').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: Object.keys(data),
+                                datasets: [{
+                                    label: 'Goals Scored',
+                                    data: Object.values(data),
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

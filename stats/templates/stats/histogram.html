@@ -1,0 +1,484 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Football Stats</title>
+        <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    </head>
+    
+    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Histogram</title>
+
+<header>
+    <h1>Football Stats</h1>
+</header>
+
+<style>
+    .filter-container {
+        text-align: center;
+    }
+
+    .table-container {
+        text-align: center;
+    }
+
+    /* Style the histogram bars */
+    .bar {
+        fill: steelblue;
+    }
+
+    /* Style the text labels */
+    .label {
+        font-family: sans-serif;
+        font-size: 12px;
+        text-anchor: middle;
+    }
+</style>
+
+<div class="filter-container">
+
+<div id="freq-analysis">
+    <h3>Frequency Analysis {{stat_type}} {{team}}</h3>
+
+    <a href="{% url 'index' %}">Go to Home</a>
+</div>
+
+<br>
+
+    <!-- League Dropdown -->
+    <div id="league-dropdown">
+        <label for="league-select">League:</label>
+        <select id="league-select">
+            
+            <option value="{{ league }}">{{ league }}</option>
+            
+        </select>
+    </div>
+
+    <br>
+
+    <!-- Season Dropdown -->
+    <div id="season-dropdown">
+        <label for="season-select">Season:</label>
+        <select id="season-select">
+            
+            <option value="{{ season }}">{{ season }}</option>
+            
+        </select>
+    </div>
+
+    <br>
+
+    <div id="stat-dropdown">
+        <label for="stat-select">Select Statistic Type:</label>
+        <select id="stat-select">
+            <option value="goals">Goals</option>
+            <option value="corners">Corners</option>
+            <option value="shots">Shots</option>
+            <option value="shots_on_target">Shots on Target</option>
+            <option value="fouls">Fouls</option>
+            <option value="yellow_cards">Yellow Cards</option>
+            <option value="red_cards">Red Cards</option>
+        </select>
+    </div>
+
+    <br>
+
+<!-- team Dropdown -->
+<div id="team-dropdown">
+    <label for="team-select">Select Team:</label>
+    <select id="team-select">
+        <option value="all">all</option>
+        {% for team in teams %}
+            <option value="{{ team }}">{{ team }}</option>
+        {% endfor %}
+    </select>
+</div>
+<br>
+   <!-- Button to go to Stat Analysis -->
+    <div id="apply-button">
+        <button id="go-to-analysis">Go to Stat Analysis</button>
+    </div>
+</div>
+
+<br>
+
+</head>
+<body>
+
+    <h2>Statistics Analysis</h2>
+
+<div class="table-container">
+    <table border="1">
+      <tr>
+        <th>Statistic</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>Mean (Average)</td>
+        <td>{{ mean_value }}</td>
+      </tr>
+      <tr>
+        <td>Median</td>
+        <td>{{ median_value }}</td>
+      </tr>
+      <tr>
+        <td>Mode</td>
+        <td>{{ mode_value }}</td>
+      </tr>
+      <tr>
+        <td>Standard Deviation</td>
+        <td>{{ std_dev_value }}</td>
+      </tr>
+      <tr>
+        <td>Variance</td>
+        <td>{{ variance_value }}</td>
+      </tr>
+      <tr>
+        <td>Range</td>
+        <td>{{ range_value }}</td>
+      </tr>
+      <tr>
+        <td>Interquartile Range (IQR)</td>
+        <td>{{ iqr_value }}</td>
+      </tr>
+      <tr>
+        <td>Skewness</td>
+        <td>{{ skewness_value }}</td>
+      </tr>
+      <tr>
+        <td>Kurtosis</td>
+        <td>{{ kurtosis_value }}</td>
+      </tr>
+    </table>
+</div>
+
+<br>
+<button id="toggleButton">Averages/Totals</button>
+<svg id="histogram">Goals scored ranking</svg>
+<br> <!-- Line break added here -->
+<br>
+<svg id="histogram2" width="1000">Frequency of goals by team</svg> <!-- Adjusted width -->
+<br>
+<br>
+<svg id="histogram3" width="1000">Frequency of goals by match</svg> <!-- Adjusted width -->
+<br>
+
+<script src="https://d3js.org/d3.v6.min.js"></script> <!-- Include D3 library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#go-to-analysis').click(function(event) {
+            // Prevent default button behavior
+            event.preventDefault();
+
+            // Get selected league and season values
+            var league = $('#league-select').val();
+            var season = $('#season-select').val();
+            var stat = $('#stat-select').val();
+            var team = $('#team-select').val();
+
+            // Construct the URL with selected league and season
+            var url = "{% url 'generate_histogram' %}?league=" + league + "&season=" + season + "&stat=" + stat + "&team=" + team;
+
+            // Redirect to the URL
+            window.location.href = url;
+        });
+    });
+</script>
+
+
+<script>
+/*
+    $(document).ready(function() {
+        $('#go-to-analysis').click(function(event) {
+            // Prevent default button behavior
+            event.preventDefault();
+
+            // Get selected league and season values
+            var league = $('#league-select').val();
+            var season = $('#season-select').val();
+            var stat = $('#stat-select').val();
+
+            // Construct the URL with selected league and season
+            var url = "{% url 'generate_histogram' %}?league=" + league + "&season=" + season + "&stat=" + stat;
+
+            // Redirect to the URL
+            window.location.href = url;
+        });
+    });
+*/
+    // Get data from Django view
+    const teams_json = JSON.parse('{{ teams_json|escapejs }}');
+    const goal_counts_json = JSON.parse('{{ goal_counts_json|escapejs }}');
+    const games_played = JSON.parse('{{ games_played|escapejs }}');
+
+    // Function to update bars based on data
+    function updateBars(data) {
+        // Sort teams based on goal counts
+        const sortedData = teams_json.map((team, index) => ({ team, count: data[index] }))
+                                     .sort((a, b) => b.count - a.count);
+
+        // Dimensions
+        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const fullWidth = window.innerWidth * 0.98; // 90% of window width
+        const fullHeight = 400; // Adjust height as needed
+        const width = fullWidth - margin.left - margin.right;
+        const height = fullHeight - margin.top - margin.bottom;
+
+        // Remove existing SVG
+        d3.select("#histogram").selectAll("*").remove();
+
+        // SVG
+        const svg = d3.select("#histogram")
+            .attr("width", fullWidth)
+            .attr("height", fullHeight)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Scales
+        const x = d3.scaleBand()
+            .domain(sortedData.map(d => d.team))
+            .range([0, width])
+            .padding(0.1);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(sortedData, d => d.count)])
+            .nice()
+            .range([height, 0]);
+
+        // Bars
+        svg.selectAll(".bar")
+            .data(sortedData)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.team))
+            .attr("width", x.bandwidth())
+            .attr("y", d => y(d.count))
+            .attr("height", d => height - y(d.count));
+
+        // Numbers on top of bars
+        svg.selectAll(".label")
+            .data(sortedData)
+            .enter().append("text")
+            .attr("class", "label")
+            .attr("x", d => x(d.team) + x.bandwidth() / 2)
+            .attr("y", d => y(d.count) - 5)
+            .attr("text-anchor", "middle")
+            //.text(d => d.count);
+            .text(d => d.count.toFixed(1)); 
+
+        // X Axis
+        svg.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x));
+
+        // Y Axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Title
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", -margin.top / 4)
+            .attr("text-anchor", "middle")
+            .text("{{stat_type}} Ranking");
+    }
+
+    // Initial rendering
+    updateBars(goal_counts_json);
+
+    // Button event handler
+    document.getElementById("toggleButton").addEventListener("click", function() {
+        if (this.innerText === "Averages/Totals") {
+            // Calculate averages
+            const averagesData = goal_counts_json.map((count, index) => count / games_played[index]);
+            updateBars(averagesData);
+            this.innerText = "Totals"; // Change button text
+        } else {
+            // Show totals
+            updateBars(goal_counts_json);
+            this.innerText = "Averages/Totals"; // Change button text
+        }
+    });
+</script>
+
+<script>
+    // Get data from Django view
+    const goals_json = JSON.parse('{{ goals_json|escapejs }}');
+    const total_games1 = goals_json.length;
+
+    // Perform frequency analysis
+    const goalCounts = {};
+    goals_json.forEach(goal => {
+        goalCounts[goal] = (goalCounts[goal] || 0) + 1;
+    });
+
+    const frequencies = Object.entries(goalCounts).map(([goals, count]) => ({ goals, count, percentage: (count / total_games1 * 100).toFixed(2) }));
+    //const frequencies = Object.entries(goalCounts).map(([goals, count]) => ({ goals, count }));
+
+    // Dimensions
+    const margin2 = { top: 20, right: 20, bottom: 30, left: 40 };
+    const fullWidth2 = window.innerWidth * 0.98; // 98% of window width
+    const fullHeight2 = 400; // Adjust height as needed
+    const width2 = fullWidth2 - margin2.left - margin2.right;
+    const height2 = fullHeight2 - margin2.top - margin2.bottom;
+
+    // Create SVG for game goals histogram
+    const svgGameGoals = d3.select("#histogram2")
+        .attr("width", fullWidth2) // Adjusted width
+        .attr("height", fullHeight2 / 2) // Half of the fullHeight
+        .append("g")
+        .attr("transform", `translate(${margin2.left},${margin2.top})`); // Adjusted for top margin
+
+    // Scales for game goals histogram
+    const xGame = d3.scaleBand()
+        .domain(frequencies.map(d => d.goals))
+        .range([0, width2]) // Reversed to fit the count on x-axis
+        .padding(0.1);
+
+    const yGame = d3.scaleLinear()
+        .domain([0, d3.max(frequencies, d => d.count)])
+        .nice()
+        .range([height2 / 2, 0]); // Reversed to fit the count on y-axis
+
+    // Bars for game goals histogram
+    svgGameGoals.selectAll(".bar")
+        .data(frequencies)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xGame(d.goals))
+        .attr("width", xGame.bandwidth())
+        .attr("y", d => yGame(d.count))
+        .attr("height", d => height2 / 2 - yGame(d.count)) // Adjusted to use height based on frequency count
+        .attr("fill", "steelblue");
+
+    // X Axis for game goals histogram
+    svgGameGoals.append("g")
+        .attr("transform", `translate(0,${height2 / 2})`) // Half of the height
+        .call(d3.axisBottom(xGame))
+        .selectAll("text")
+        .attr("y", 10) // Adjusted to position the labels below the axis
+        .attr("dy", ".35em") // Adjusted for better alignment
+        .attr("transform", "rotate(90)") // Rotated for better alignment
+        .style("text-anchor", "start"); // Adjusted for better alignment
+
+    // Y Axis for game goals histogram
+    svgGameGoals.append("g")
+        .call(d3.axisLeft(yGame));
+
+    // Labels for game goals histogram
+    svgGameGoals.selectAll(".label")
+        .data(frequencies)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("x", d => xGame(d.goals) + xGame.bandwidth() / 2)
+        .attr("y", d => yGame(d.count) - 5) // Adjusted for better alignment
+        .attr("text-anchor", "middle")
+        //.text(d => d.count);
+        .text(d => `${d.count} (${d.percentage}%)`);
+    
+    // Title
+    svgGameGoals.append("text")
+        .attr("x", width2 / 4)
+        .attr("y", -margin2.top / 4)
+        .attr("text-anchor", "middle")
+        .text("{{stat_type}} by Team");
+</script>
+
+
+<script>
+    // Get data from Django view
+    const total_goals_json = JSON.parse('{{ total_goals_json|escapejs }}');
+    const total_games = total_goals_json.length;
+
+    // Perform frequency analysis
+    const totalGoalCounts = {};
+    total_goals_json.forEach(goal => {
+        totalGoalCounts[goal] = (totalGoalCounts[goal] || 0) + 1;
+    });
+
+    //const totalFrequencies = Object.entries(totalGoalCounts).map(([goals, count]) => ({ goals, count }));
+    const totalFrequencies = Object.entries(totalGoalCounts).map(([goals, count]) => ({ goals, count, percentage: (count / total_games * 100).toFixed(2) }));
+    // Dimensions
+    const margin3 = { top: 20, right: 20, bottom: 30, left: 40 };
+    const fullWidth3 = window.innerWidth * 0.98; // 98% of window width
+    const fullHeight3 = 400; // Adjust height as needed
+    const width3 = fullWidth3 - margin3.left - margin3.right;
+    const height3 = fullHeight3 - margin3.top - margin3.bottom;
+    //const fullHeight3 = 600; // Increase the height as needed
+    //const height3 = fullHeight3 - margin3.top - margin3.bottom;
+
+
+    // Create SVG for total goals histogram
+    const svgTotalGoals = d3.select("#histogram3")
+        .attr("width", fullWidth3) // Adjusted width
+        .attr("height", fullHeight3 / 2) // Half of the fullHeight
+        .append("g")
+        .attr("transform", `translate(${margin3.left},${margin3.top})`); // Adjusted for top margin
+
+    // Scales for total goals histogram
+    const xTotal = d3.scaleBand()
+        .domain(totalFrequencies.map(d => d.goals))
+        .range([0, width3]) // Reversed to fit the count on x-axis
+        .padding(0.1);
+
+    const yTotal = d3.scaleLinear()
+        .domain([0, d3.max(totalFrequencies, d => d.count)])
+        .nice()
+        .range([height3 / 2, 0]); // Reversed to fit the count on y-axis
+
+    // Bars for total goals histogram
+    svgTotalGoals.selectAll(".bar")
+        .data(totalFrequencies)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xTotal(d.goals))
+        .attr("width", xTotal.bandwidth())
+        .attr("y", d => yTotal(d.count))
+        .attr("height", d => height3 / 2 - yTotal(d.count)) // Adjusted to use height based on frequency count
+        .attr("fill", "steelblue");
+
+    // X Axis for total goals histogram
+    svgTotalGoals.append("g")
+        .attr("transform", `translate(0,${height3 / 2})`) // Half of the height
+        .call(d3.axisBottom(xTotal))
+        .selectAll("text")
+        .attr("y", 10) // Adjusted to position the labels below the axis
+        .attr("dy", ".35em") // Adjusted for better alignment
+        .attr("transform", "rotate(90)") // Rotated for better alignment
+        .style("text-anchor", "start"); // Adjusted for better alignment
+
+
+    // Y Axis for total goals histogram
+    svgTotalGoals.append("g")
+        .call(d3.axisLeft(yTotal));
+
+    // Labels for total goals histogram
+    svgTotalGoals.selectAll(".label")
+        .data(totalFrequencies)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("x", d => xTotal(d.goals) + xTotal.bandwidth() / 2)
+        .attr("y", d => yTotal(d.count) - 5) // Adjusted for better alignment
+        .attr("text-anchor", "middle")
+        //.text(d => d.count);
+        .text(d => `${d.count} (${d.percentage}%)`);
+
+        // Title
+    svgTotalGoals.append("text")
+        .attr("x", width3 / 4)
+        .attr("y", -margin3.top / 4)
+        .attr("text-anchor", "middle")
+        .text("{{stat_type}} by match");
+</script>
+
+    
+
+</body>
+</html>

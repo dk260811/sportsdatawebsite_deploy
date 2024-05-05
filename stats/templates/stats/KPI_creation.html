@@ -1,0 +1,26 @@
+<!-- initial.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+
+    <!-- Other sections... -->
+
+    <div id="KPI_creation">
+        <h3>KPI creation</h3>
+
+        <a href="{% url 'index' %}">Go to Home</a>
+    </div>
+
+    <!-- Other sections... -->
+</body>
+</html>

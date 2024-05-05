@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Histogram</title>
+<style>
+    /* Style the histogram bars */
+    .bar {
+        fill: steelblue;
+    }
+
+    /* Style the text labels */
+    .label {
+        font-family: sans-serif;
+        font-size: 12px;
+        text-anchor: middle;
+    }
+</style>
+</head>
+<body>
+<svg id="histogram"></svg>
+
+<script src="https://d3js.org/d3.v6.min.js"></script> <!-- Include D3 library -->
+
+<script>
+    // Get data from Django view
+    const teams_json = JSON.parse('{{ dates_json|escapejs }}');
+    const goal_counts_json = JSON.parse('{{ goals_json|escapejs }}');
+
+    // Dimensions
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const fullWidth = window.innerWidth * 0.98; // 90% of window width
+    const fullHeight = 400; // Adjust height as needed
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
+
+    // SVG
+    const svg = d3.select("#histogram")
+        .attr("width", fullWidth)
+        .attr("height", fullHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Scales
+    const x = d3.scaleBand()
+        .domain(teams_json)
+        .range([0, width])
+        .padding(0.1);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(goal_counts_json)])
+        .nice()
+        .range([height, 0]);
+
+    // Bars
+    svg.selectAll(".bar")
+        .data(teams_json)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d))
+        .attr("width", x.bandwidth())
+        .attr("y", (d, i) => y(goal_counts_json[i]))
+        .attr("height", (d, i) => height - y(goal_counts_json[i]));
+
+    // X Axis
+    svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x));
+
+    // Y Axis
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    // Labels
+    svg.selectAll(".label")
+        .data(teams_json)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("x", d => x(d) + x.bandwidth() / 2)
+        .attr("y", (d, i) => y(goal_counts_json[i]) - 5)
+        .attr("text-anchor", "middle")
+        .text((d, i) => goal_counts_json[i]);
+</script>
+</body>
+</html>

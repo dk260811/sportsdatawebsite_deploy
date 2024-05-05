@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <script src="{% static 'scripts/script.js' %}"></script>
+
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#basic">Basic Team Table</a></li>
+            <li><a href="#advanced">Advanced Team Table</a></li>
+            <li><a href="#player">Player Table</a></li>
+            <li><a href="#other">Other</a></li>
+        </ul>
+    </nav>
+    
+    <div id="basic" class="tab-content">
+        <h2>Basic Team Table</h2>
+        <!-- Content for basic team table goes here -->
+    </div>
+    
+    <div id="advanced" class="tab-content">
+        <h2>Advanced Team Table</h2>
+        <!-- Content for advanced team table goes here -->
+    </div>
+    
+    <div id="player" class="tab-content">
+        <h2>Player Table</h2>
+        <!-- Content for player table goes here -->
+    </div>
+    
+    <div id="other" class="tab-content">
+        <h2>Other</h2>
+        <!-- Content for other section goes here -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

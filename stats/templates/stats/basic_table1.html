@@ -1,0 +1,120 @@
+<!-- initial.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* Container styles */
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Div styles */
+        .container-div {
+            margin-bottom: 20px;
+        }
+
+        .container-div h3 {
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+
+        .container-div a {
+            text-decoration: none;
+            color: #007bff;
+            background-color: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .container-div a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Form styles */
+        select, button {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    <input type="hidden" id="isIndexPage" value="true">
+
+    <div id="container">
+        <div class="container-div" id="freq-analysis">
+            <h3>Home</h3>
+            <a href="{% url 'index' %}">Go to Home</a>
+        </div>
+
+        <div class="container-div" id="filters">
+            <h3>Basic Table</h3>
+            <label for="season">Select Season:</label>
+            <select id="season">
+                <option value="">All</option>
+                {% for season in seasons %}
+                    <option value="{{ season }}">{{ season }}</option>
+                {% endfor %}
+            </select>
+            <label for="league">Select League:</label>
+            <select id="league">
+                <option value="">All</option>
+                {% for league in leagues %}
+                    <option value="{{ league }}">{{ league }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="applyFilters()">Apply Filters</button>
+        </div>
+
+        <div class="container-div" id="team-table">
+            <!-- Table content will be loaded dynamically after applying filters -->
+        </div>
+    </div>
+
+    <script src="{% static 'stats/script.js' %}"></script>
+</body>
+</html>

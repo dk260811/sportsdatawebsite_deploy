@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats</title>
+    <link rel="stylesheet" href="{% static 'stats/styles.css' %}">
+    <script src="{% static 'stats/script.js' %}"></script>
+    <style>
+        .filter-container {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Football Stats</h1>
+    </header>
+    
+    <div class="filter-container">
+
+        <div id="stat-analysis">
+            <h3>Detailed games</h3>
+            <!-- Add the content for stat analysis here -->
+            <a href="{% url 'index' %}">Go to Home</a>
+        </div>
+
+        <br>
+
+        <!-- League Dropdown -->
+        <div id="league-dropdown">
+            <label for="league-select">League:</label>
+            <input type="text" id="league-select" value="{{ league }}">
+        </div>
+
+        <br>
+        <!-- Season Dropdown -->
+        <div id="season-dropdown">
+            <label for="season-select">Season:</label>
+            <input type="text" id="season-select" value="{{ season }}">
+        </div>
+
+        <br>
+        <!-- Date Range Picker -->
+        <div id="date-range-picker">
+            <label for="start-date">Start Date:</label>
+            <input type="text" id="start-date" value="{{ startdate }}">
+        </div>
+
+        <br>
+
+        <div id="date-range-picker2">
+            <label for="end-date">End Date:</label>
+            <input type="text" id="end-date" value="{{ enddate }}">
+        </div>
+
+        <br>
+
+        <div id="team-dropdown">
+            <label for="team-select">Select team:</label>
+            <select id="team-select">
+                {% for team in teams %}
+                    <option value="{{ team }}">{{ team }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <br>
+
+        <!-- Button to go to Stat Analysis -->
+        <div id="apply-button">
+            <button id="go-to-games">Go to games</button>
+        </div>
+    </div>
+
+    <!-- Include jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <div id="detail_games" class="tab-content">
+        <h2>All games Table</h2>
+
+        <table class="team-table">
+            <thead>
+                <tr>
+                    <th>Date of game </th>
+                    <th>Season </th>
+                    <th>League </th>
+                    <th>Hometeam </th>
+                    <th>Awayteam </th>
+                    <th>Home or Away </th>
+                    <th>Goals </th>
+                    <th>Goals against </th>
+                    <th>Half time goals </th>
+                    <th>Half time goals against </th>
+                    <th>Referee </th>
+                    <th>Shots </th>
+                    <th>Shots against </th>
+                    <th>Shots on target </th>
+                    <th>Shots on target against </th>
+                    <th>Fouls </th>
+                    <th>Fouls against </th>
+                    <th>Corners </th>
+                    <th>Corners against </th>
+                    <th>Yellow cards </th>
+                    <th>Yellow cards against </th>
+                    <th>Red cards </th>
+                    <th>Red cards against </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for game in games3 %}
+                <tr>
+                    <td>{{ game.date_of_game_ft }}</td>
+                    <td>{{ game.season_ft }}</td>
+                    <td>{{ game.league }}</td>
+                    <td>{{ game.team_ft }}</td>
+                    <td>{{ game.opponent_ft }}</td>
+                    <td>{{ game.home_ft }}</td>
+                    <td>{{ game.full_time_goals_scored_ft }}</td>
+                    <td>{{ game.full_time_goals_conceded_ft }}</td>
+                    <td>{{ game.half_time_team_goals_scored_ft }}</td>
+                    <td>{{ game.half_time_team_goals_conceded_ft }}</td>
+                    <td>{{ game.referee_ft }}</td>
+                    <td>{{ game.team_shots_recorded_ft }}</td>
+                    <td>{{ game.team_shots_conceded_ft }}</td>
+                    <td>{{ game.team_shots_on_target_recorded_ft }}</td>
+                    <td>{{ game.team_shots_on_target_conceded_ft }}</td>
+                    <td>{{ game.team_fouls_committed_recorded_ft }}</td>
+                    <td>{{ game.team_fouls_committed_conceded_ft }}</td>
+                    <td>{{ game.team_corners_recorded_ft }}</td>
+                    <td>{{ game.team_corners_conceded_ft }}</td>
+                    <td>{{ game.team_yellow_cards_recorded_ft }}</td>
+                    <td>{{ game.team_yellow_cards_conceded_ft}}</td>
+                    <td>{{ game.team_red_cards_recorded_ft }}</td>
+                    <td>{{ game.team_red_cards_conceded_ft}}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+        <script>
+            $(document).ready(function() {
+                // Initialize datepicker for start date
+                /*$("#start-date").datepicker({
+                    dateFormat: 'yy-mm-dd',
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    onSelect: function(selectedDate) {
+                        $("#end-date").datepicker("option", "minDate", selectedDate);
+                    }
+                });*/
+                // Get the value of start date from the placeholder
+                //var startDateValue = $('#start-date').attr('placeholder');
+                // Set the value of the start date input field
+                //$('#start-date').val(startDateValue);
+
+                // Initialize datepicker for end date
+                /*$("#end-date").datepicker({
+                    dateFormat: 'yy-mm-dd',
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    onSelect: function(selectedDate) {
+                        $("#start-date").datepicker("option", "maxDate", selectedDate);
+                    }
+                });*/
+
+                $('#go-to-games').click(function(event) {
+                    // Prevent default button behavior
+                    event.preventDefault();
+
+                    // Get selected league, season, start date, and end date values
+                    var league = $('#league-select').val();
+                    var season = $('#season-select').val();
+                    var startDate = $('#start-date').val();
+                    var endDate = $('#end-date').val();
+                    var team = $('#team-select').val();
+
+                    // Construct the URL with selected league, season, start date, and end date
+                    var url = "{% url 'generate_games' %}?league=" + league + "&season=" + season + "&start_date=" + startDate + "&end_date=" + endDate + "&team=" + team;
+                    //var url = "{% url 'generate_games' %}?league=" + league + "&season=" + season
+
+                    // Redirect to the URL
+                    window.location.href = url;
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>
